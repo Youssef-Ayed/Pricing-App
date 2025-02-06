@@ -1,0 +1,63 @@
+<div class="container">
+  <h1 class="title">Pricing Calculator</h1>
+  <div class="calculator">
+    <div class="input-group">
+      <h3>Printer Settings</h3>
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+    </div>
+    <div class="input-group">
+      <h3>Part Parameters</h3>
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+      <label>Preset Configurations:</label>
+      <input type="number" [(ngModel)]="storage" />
+    </div>
+    <div class="input-group">
+      <h3>Cost Distribution</h3>
+      <h5>Total Cost:</h5>
+      <h5>$7.53</h5>
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [labels]="chartOptions.labels"
+        [responsive]="chartOptions.responsive"
+      ></apx-chart>
+    </div>
+  </div>
+  <div class="total">
+    <p>
+      Total Price: <span>${{ totalPrice.toFixed(2) }}</span>
+    </p>
+  </div>
+</div>
