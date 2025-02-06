@@ -1,52 +1,165 @@
 <div class="container">
   <h1 class="title">Pricing Calculator</h1>
-  <div class="calculator">
+
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <button (click)="activeTab = 'fdm'" [class.active]="activeTab === 'fdm'">
+      FDM Calculator
+    </button>
+    <button
+      (click)="activeTab = 'resin'"
+      [class.active]="activeTab === 'resin'"
+    >
+      SLA Calculator
+    </button>
+  </div>
+
+  <!-- FDM Printing Tab -->
+  <div class="calculator" *ngIf="activeTab === 'fdm'">
     <div class="input-group">
-      <h3>Printer Settings</h3>
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
+      <h3><i class="fa-solid fa-gear"></i> Printer Settings</h3>
+      <label>Preset Configuration:</label>
+      <input type="text" [(ngModel)]="preset_configuration" />
+
+      <label>Nozzle Diameter (mm):</label>
+      <input type="number" [(ngModel)]="nozzle_diameter" />
+
+      <label>Layer Height (mm):</label>
+      <input type="number" [(ngModel)]="layer_height" />
+
+      <label>Base Print Speed (mm/s):</label>
+      <input type="number" [(ngModel)]="base_print_speed" />
+
+      <label>Wall Speed Factor:</label>
+      <input type="number" step="0.1" [(ngModel)]="wall_speed_factor" />
+
+      <label>Infill Speed Factor:</label>
+      <input type="number" step="0.1" [(ngModel)]="infill_speed_factor" />
+
+      <label>Support Speed Factor:</label>
+      <input type="number" step="0.1" [(ngModel)]="support_speed_factor" />
+
+      <label>Material Cost per kg ($):</label>
+      <input type="number" [(ngModel)]="material_cost_per_kg" />
+
+      <label>Machine Cost per Hour ($):</label>
+      <input type="number" [(ngModel)]="machine_cost_per_hour" />
+
+      <label>Material Density (g/cm³):</label>
+      <input type="number" step="0.01" [(ngModel)]="material_density" />
     </div>
+
     <div class="input-group">
-      <h3>Part Parameters</h3>
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
-      <label>Preset Configurations:</label>
-      <input type="number" [(ngModel)]="storage" />
+      <h3><i class="fa-brands fa-uncharted"></i> Part Parameters</h3>
+      <label>Number of Walls:</label>
+      <input type="number" [(ngModel)]="num_walls" />
+
+      <label>Support Density:</label>
+      <input type="number" step="0.01" [(ngModel)]="support_density" />
+
+      <label>Setup Cost ($):</label>
+      <input type="number" [(ngModel)]="setup_cost" />
+
+      <label>Waste Factor:</label>
+      <input type="number" step="0.01" [(ngModel)]="waste_factor" />
+
+      <label>Part Preset:</label>
+      <input type="text" [(ngModel)]="part_preset" />
+
+      <label>Volume (cm³):</label>
+      <input type="number" [(ngModel)]="volume" />
+
+      <label>Surface Area (cm²):</label>
+      <input type="number" [(ngModel)]="surface_area" />
+
+      <label>Support Volume (cm³):</label>
+      <input type="number" [(ngModel)]="support_volume" />
+
+      <label>Infill Ratio:</label>
+      <input type="number" step="0.01" [(ngModel)]="infill_ratio" />
     </div>
+
+    <div class="">
+      <div class="input-group">
+        <h3><i class="fa-solid fa-money-bill"></i> Cost Distribution</h3>
+        <h5>Total Cost:</h5>
+        <h5>${{ totalPrice.toFixed(2) }}</h5>
+
+        <apx-chart
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [labels]="chartOptions.labels"
+          [responsive]="chartOptions.responsive"
+        ></apx-chart>
+      </div>
+      <div class="input-group">
+        <h3><i class="fa-solid fa-clock"></i> Time Analysis</h3>
+        <apx-chart
+          [series]="barChartOptions.series"
+          [chart]="barChartOptions.chart"
+          [dataLabels]="barChartOptions.dataLabels"
+          [plotOptions]="barChartOptions.plotOptions"
+          [yaxis]="barChartOptions.yaxis"
+          [xaxis]="barChartOptions.xaxis"
+          [fill]="barChartOptions.fill"
+          [title]="barChartOptions.title"
+        ></apx-chart>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resin Printing Tab -->
+  <div class="calculator" *ngIf="activeTab === 'resin'">
     <div class="input-group">
-      <h3>Cost Distribution</h3>
-      <h5>Total Cost:</h5>
-      <h5>$7.53</h5>
+      <h3><i class="fa-solid fa-gear"></i> Part Parameters</h3>
+      <label>Width (mm):</label>
+      <input type="number" [(ngModel)]="width" />
+
+      <label>Height (mm):</label>
+      <input type="number" [(ngModel)]="height" />
+
+      <label>Length (mm):</label>
+      <input type="number" [(ngModel)]="length" />
+
+      <label>Volume (cm³):</label>
+      <input type="number" [(ngModel)]="volume" />
+
+      <label>Surface Area (cm²):</label>
+      <input type="number" [(ngModel)]="surface_area" />
+    </div>
+
+    <div class="input-group">
+      <h3><i class="fa-solid fa-gear"></i> Printer Settings</h3>
+      <label>Layer Height (mm):</label>
+      <input type="number" [(ngModel)]="layer_height" />
+
+      <label>Average Time per Layer (s):</label>
+      <input type="number" [(ngModel)]="average_time_per_layer" />
+
+      <label>Manual Print Time Increase (%):</label>
+      <input type="number" [(ngModel)]="manual_print_time_increase" />
+
+      <label>Setup Fee ($):</label>
+      <input type="number" [(ngModel)]="setup_fee" />
+    </div>
+
+    <div class="input-group">
+      <h3><i class="fa-brands fa-uncharted"></i> Material & Costs</h3>
+      <label>Resin Cost per ml ($):</label>
+      <input type="number" [(ngModel)]="resin_cost_per_ml" />
+
+      <label>Resin Density (g/cm³):</label>
+      <input type="number" step="0.01" [(ngModel)]="resin_density" />
+
+      <label>Machine Hourly Rate ($):</label>
+      <input type="number" [(ngModel)]="machine_hourly_rate" />
+
+      <label>Waste Factor:</label>
+      <input type="number" step="0.01" [(ngModel)]="waste_factor" />
+
+      <label>Support Density:</label>
+      <input type="number" step="0.01" [(ngModel)]="support_density" />
+
       <apx-chart
         [series]="chartOptions.series"
         [chart]="chartOptions.chart"
@@ -55,9 +168,33 @@
       ></apx-chart>
     </div>
   </div>
-  <div class="total">
-    <p>
-      Total Price: <span>${{ totalPrice.toFixed(2) }}</span>
-    </p>
+  <div class="calculator" *ngIf="activeTab === 'resin'">
+    <div class="input-group">
+      <h3>Print Summary</h3>
+    </div>
+  </div>
+  <div class="calculator" *ngIf="activeTab === 'resin'">
+    <div class="input-group">
+      <h3>Cost Distribution</h3>
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [labels]="chartOptions.labels"
+        [responsive]="chartOptions.responsive"
+      ></apx-chart>
+    </div>
+    <div class="input-group">
+      <h3>Volume Analysis</h3>
+      <apx-chart
+        [series]="barChartOptions.series"
+        [chart]="barChartOptions.chart"
+        [dataLabels]="barChartOptions.dataLabels"
+        [plotOptions]="barChartOptions.plotOptions"
+        [yaxis]="barChartOptions.yaxis"
+        [xaxis]="barChartOptions.xaxis"
+        [fill]="barChartOptions.fill"
+        [title]="barChartOptions.title"
+      ></apx-chart>
+    </div>
   </div>
 </div>
