@@ -44,6 +44,11 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+.input-group select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 .total {
   margin-top: 20px;
   font-size: 18px;

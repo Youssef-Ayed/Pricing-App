@@ -1,10 +1,18 @@
 import { RouterOutlet } from '@angular/router';
-import { Component, ViewChild } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  Renderer2,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ChartComponent } from 'ng-apexcharts';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import {
   ApexAxisChartSeries,
   ApexDataLabels,
@@ -48,6 +56,7 @@ export type BarChartOptions = {
     ReactiveFormsModule,
     FontAwesomeModule,
     CommonModule,
+    HttpClientModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -56,13 +65,36 @@ export class AppComponent {
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptions!: ChartOptions;
   public barChartOptions!: BarChartOptions;
+
+  private inputListener!: () => void;
+
   activeTab: string = 'fdm';
-  constructor() {
+
+  total_cost = 175.58333333333334;
+  material_cost = 170.5;
+  machine_cost = 0.08333333333333333;
+  total_time = 0.041666666666666664;
+  wall_time = 0.013888888888888888;
+  infill_time = 0.00462962962962963;
+  shell_ratio = 0.8;
+  material_volume = 5500;
+  material_flow_rate = 6.283185307179587;
+
+  layers: number = 1371;
+  print_time: number = 23989.080716589586;
+  model_volume: number = 27525.21;
+  waste_volume: number = 5505.042000000001;
+
+  constructor(private http: HttpClient, private renderer: Renderer2) {
+    this.updateCharts();
+  }
+
+  updateCharts() {
     this.barChartOptions = {
       series: [
         {
           name: 'Duration',
-          data: [2.3, 3.1],
+          data: [this.wall_time, this.infill_time],
         },
       ],
       chart: {
@@ -145,7 +177,7 @@ export class AppComponent {
         },
       },
       title: {
-        text: 'Total Time',
+        text: 'Total Time: ' + this.total_time,
         floating: false,
         offsetY: 320,
         align: 'center',
@@ -155,12 +187,12 @@ export class AppComponent {
       },
     };
     this.chartOptions = {
-      series: [44, 55, 13, 43, 22],
+      series: [this.material_cost, this.machine_cost, this.setup_cost],
       chart: {
         width: 380,
         type: 'pie',
       },
-      labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+      labels: ['Material', 'Machine', 'Setup'],
       responsive: [
         {
           breakpoint: 480,
@@ -176,6 +208,22 @@ export class AppComponent {
       ],
     };
   }
+
+  ngOnInit() {
+    this.inputListener = this.renderer.listen('document', 'input', (event) => {
+      console.log('change');
+
+      this.calculateCost();
+      this.calculateSlaCost();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.inputListener) {
+      this.inputListener();
+    }
+  }
+
   // Define properties for form inputs
   preset_configuration: string = 'Standard 0.4mm';
   nozzle_diameter: number = 0.4;
@@ -211,6 +259,89 @@ export class AppComponent {
 
   // Pricing logic (adjust based on actual formula)
   get totalPrice(): number {
-    return 10;
+    return this.total_cost;
+  }
+
+  calculateCost() {
+    const apiUrl =
+      'https://sm-backend-v2-dev-ms-fdm-sla-calculator-fdbud9drb4f0cuct.westeurope-01.azurewebsites.net/fdm-calculate/';
+
+    const requestBody = {
+      preset_configuration: this.preset_configuration,
+      nozzle_diameter: this.nozzle_diameter,
+      layer_height: this.layer_height,
+      base_print_speed: this.base_print_speed,
+      wall_speed_factor: this.wall_speed_factor,
+      infill_speed_factor: this.infill_speed_factor,
+      support_speed_factor: this.support_speed_factor,
+      material_cost_per_kg: this.material_cost_per_kg,
+      machine_cost_per_hour: this.machine_cost_per_hour,
+      material_density: this.material_density,
+      num_walls: this.num_walls,
+      support_density: this.support_density,
+      setup_cost: this.setup_cost,
+      waste_factor: this.waste_factor,
+      part_preset: this.part_preset,
+      volume: this.volume,
+      surface_area: this.surface_area,
+      support_volume: this.support_volume,
+      infill_ratio: this.infill_ratio,
+    };
+
+    this.http.post<any>(apiUrl, requestBody).subscribe(
+      (response) => {
+        this.total_cost = response.total_cost;
+        this.material_cost = response.material_cost;
+        this.machine_cost = response.machine_cost;
+        this.total_time = response.total_time;
+        this.wall_time = response.wall_time;
+        this.infill_time = response.infill_time;
+        this.shell_ratio = response.shell_ratio;
+        this.material_volume = response.material_volume;
+        this.material_flow_rate = response.material_flow_rate;
+        this.updateCharts();
+      },
+      (error) => {
+        console.error('API call failed:', error);
+      }
+    );
+  }
+  calculateSlaCost() {
+    const apiUrl =
+      'https://sm-backend-v2-dev-ms-fdm-sla-calculator-fdbud9drb4f0cuct.westeurope-01.azurewebsites.net/sla-calculate/';
+
+    const requestBody = {
+      width: this.width,
+      height: this.height,
+      length: this.length,
+      volume: this.volume,
+      surface_area: this.surface_area,
+      layer_height: this.layer_height,
+      average_time_per_layer: this.average_time_per_layer,
+      manual_print_time_increase: this.manual_print_time_increase,
+      setup_fee: this.setup_fee,
+      resin_cost_per_ml: this.resin_cost_per_ml,
+      resin_density: this.resin_density,
+      machine_hourly_rate: this.machine_hourly_rate,
+      waste_factor: this.waste_factor,
+      support_density: this.support_density,
+    };
+
+    this.http.post<any>(apiUrl, requestBody).subscribe(
+      (response) => {
+        this.layers = response.layers;
+        this.print_time = response.print_time;
+        this.material_cost = response.material_cost;
+        this.machine_cost = response.machine_cost;
+        this.total_cost = response.total_cost;
+        this.model_volume = response.model_volume;
+        this.support_volume = response.support_volume;
+        this.waste_volume = response.waste_volume;
+        this.updateCharts();
+      },
+      (error) => {
+        console.error('API call failed:', error);
+      }
+    );
   }
 }

@@ -19,7 +19,11 @@
     <div class="input-group">
       <h3><i class="fa-solid fa-gear"></i> Printer Settings</h3>
       <label>Preset Configuration:</label>
-      <input type="text" [(ngModel)]="preset_configuration" />
+      <select id="presetConfig" [(ngModel)]="preset_configuration">
+        <option value="Standard 0.4mm">Standard 0.4mm</option>
+        <option value="Large 1.0mm">Large 1.0mm</option>
+        <option value="High Speed 0.6mm">High Speed 0.6mm</option>
+      </select>
 
       <label>Nozzle Diameter (mm):</label>
       <input type="number" [(ngModel)]="nozzle_diameter" />
@@ -64,7 +68,11 @@
       <input type="number" step="0.01" [(ngModel)]="waste_factor" />
 
       <label>Part Preset:</label>
-      <input type="text" [(ngModel)]="part_preset" />
+      <select id="partPreset" [(ngModel)]="part_preset">
+        <option value="Small Part">Small Part</option>
+        <option value="Large Solid Part">Large Solid Part</option>
+        <option value="Thin-Walled Part">Thin-Walled Part</option>
+      </select>
 
       <label>Volume (cm³):</label>
       <input type="number" [(ngModel)]="volume" />
@@ -82,8 +90,8 @@
     <div class="">
       <div class="input-group">
         <h3><i class="fa-solid fa-money-bill"></i> Cost Distribution</h3>
-        <h5>Total Cost:</h5>
-        <h5>${{ totalPrice.toFixed(2) }}</h5>
+        <label>Total Cost:</label>
+        <label>${{ totalPrice.toFixed(2) }}</label>
 
         <apx-chart
           [series]="chartOptions.series"
@@ -104,11 +112,16 @@
           [fill]="barChartOptions.fill"
           [title]="barChartOptions.title"
         ></apx-chart>
+        <label>Wall Print Time: {{ wall_time }} hours</label>
+        <label>Infill Print Time: {{ infill_time }} hours</label>
+        <label>Shell Ratio: {{ shell_ratio }}</label>
+        <label>Material Volume: {{ material_volume }} cm³</label>
+        <label>Material Flow Rate: {{ material_flow_rate }} mm³/s</label>
       </div>
     </div>
   </div>
 
-  <!-- Resin Printing Tab -->
+  <!-- SLA Printing Tab -->
   <div class="calculator" *ngIf="activeTab === 'resin'">
     <div class="input-group">
       <h3><i class="fa-solid fa-gear"></i> Part Parameters</h3>
@@ -159,18 +172,25 @@
 
       <label>Support Density:</label>
       <input type="number" step="0.01" [(ngModel)]="support_density" />
-
-      <apx-chart
-        [series]="chartOptions.series"
-        [chart]="chartOptions.chart"
-        [labels]="chartOptions.labels"
-        [responsive]="chartOptions.responsive"
-      ></apx-chart>
     </div>
   </div>
   <div class="calculator" *ngIf="activeTab === 'resin'">
     <div class="input-group">
       <h3>Print Summary</h3>
+      <div style="display: flex; flex-direction: row">
+        <div style="display: flex; flex-direction: column; flex: 1">
+          <label>Layers: {{ layers }}</label>
+          <label>Material Cost: {{ material_cost }}</label>
+          <label>Setup fee: {{ setup_fee }}</label>
+        </div>
+        <div style="display: flex; flex-direction: column; flex: 1">
+          <label>Print time: {{ print_time }}</label>
+          <label>Machine cost: {{ machine_cost }}</label>
+        </div>
+      </div>
+      <div style="text-align: center">
+        <label>Total cost: {{ total_cost }}</label>
+      </div>
     </div>
   </div>
   <div class="calculator" *ngIf="activeTab === 'resin'">
